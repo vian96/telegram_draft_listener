@@ -11,7 +11,7 @@ tlgraph = Telegraph(config.tlgraph_token)
 
 
 @app.on_raw_update() 
-def draft_update(client, update):
+def draft_update(client, update, users, chats):
     try:
         try:
             txt = update.draft.message # check if update is draft
