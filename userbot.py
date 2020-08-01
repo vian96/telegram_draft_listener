@@ -56,7 +56,7 @@ def draft_update(client, update, users, chats):
             "<p>" + txt.replace('\n'*2, '</p><p>').replace('\n', '<br/>')+'</p>', # creating html page
             'Author name', "Author link"
         )
-        mes.edit_text(res['url'])
+        mes.edit_text(res['url'], parse_mode=None)
 
     except Exception as e:
         app.send_message('me', e)
