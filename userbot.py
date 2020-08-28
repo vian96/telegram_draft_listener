@@ -9,6 +9,11 @@ import config
 app = pyrogram.Client(config.name, config.api_id, config.api_hash)
 tlgraph = Telegraph(config.tlgraph_token)
 
+def slice_to_first_char(s1, s2):
+    for i, c in enumerate(s1):
+        if c in s2:
+            return s1[:i+1]
+    return s1
 
 @app.on_raw_update() 
 def draft_update(client, update, users, chats):
@@ -38,17 +43,16 @@ def draft_update(client, update, users, chats):
             pass
         
         # getting title
+        title=txt[:min(250, len(txt))]
         for title_start in ['назв', 'название', 'name', 'title', ]: # user writes his own title
             srch = '&'+title_start+'&'
-            if txt.startswith(srch):
-                title = txt[len(srch) : txt.find(srch, 2)]
-                txt = txt[len(srch)+txt.find(srch, 2):]
+            if title.startswith(srch):
+                title, txt = title[len(srch) : title.find(srch, 2)], txt[len(srch)+title.find(srch, 2):]
                 break  
         else:   # creating title from text
-            title = txt[:min(
-                txt.find('\n') if '\n' in txt else len(txt), txt.find('.') if '.' in txt else len(txt), 
-                txt.find('!')+1 if '!' in txt else len(txt), txt.find('?')+1 if '?' in txt else len(txt), 200
-            )]
+            title = slice_to_first_char(title, "\n.!?")
+            if title[-1]=='.':
+                title=title[:-2]
 
 
         res = tlgraph.create_page(
